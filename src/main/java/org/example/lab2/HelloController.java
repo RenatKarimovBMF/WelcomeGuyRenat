@@ -1,10 +1,14 @@
 package org.example.lab2;
+import java.io.IOException;
 import java.util.ArrayList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
+import javafx.stage.Stage;
+import javafx.scene.Scene;
+import javafx.application.Platform;
 
 public class HelloController
 {
@@ -39,16 +43,31 @@ public class HelloController
             }
         }
 
-        if (userFound) {
-            welcomeText.setText("Welcome, " + username + "!");
+        if (userFound)
+        {
+            try
+            {
+                FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("welcome-w.fxml"));
+                Parent root = loader.load();
+                Stage welcomeStage = new Stage();
+                welcomeStage.setTitle("Welcome!");
+                welcomeStage.setScene(new Scene(root));
+                welcomeStage.setResizable(false);
+                welcomeStage.setOnCloseRequest(event ->
+                {
+                    Platform.exit();
+                    System.exit(0);
+                });
+                welcomeStage.show();
+                Stage loginStage = (Stage) usernameField.getScene().getWindow();
+                loginStage.close();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
 
-            // create popup window
-            Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("Welcome");
-            alert.setHeaderText(null); // no big header text
-            alert.setContentText("Welcome " + username + "!");
 
-            alert.showAndWait(); // show dialog and wait until user closes it
         } else {
             welcomeText.setText("Wrong username or password");
         }
